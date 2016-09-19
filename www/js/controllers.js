@@ -14,6 +14,10 @@ angular.module('starter.controllers', [])
     localStorage.link = link;
   }
 
+  $scope.get = function(page, link) {
+    return [{page: page, link: link}];
+  }
+
    // var db = window.openDatabase('db2.db', 1.0, 'db', 2*1024*1024);
    // console.log(db);
    // console.log("Prefs");
