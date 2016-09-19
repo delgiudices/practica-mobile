@@ -2,6 +2,7 @@ angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope, $ionicPlatform, $cordovaPreferences) {
 
+  var db = window.openDatabase('db2.db', 1.0, 'db', 2*1024*1024);
   if (localStorage.page) {
     $scope.page = localStorage.page;
   }
@@ -10,16 +11,48 @@ angular.module('starter.controllers', [])
   }
 
   $scope.save = function(page, link) {
-    localStorage.page = page;
-    localStorage.link = link;
+    // var db = window.openDatabase('db2.db', 1.0, 'db', 2*1024*1024);
+    console.log(db);
+    // localStorage.page = page;
+    // localStorage.link = link;
+    db.transaction(function(tx) {
+       tx.executeSql('CREATE TABLE IF NOT EXISTS redes (page, link)');
+       tx.executeSql('INSERT INTO redes VALUES (?,?)', [page, link]);
+       tx.executeSql('SELECT count(*) AS mycount FROM redes', [], function(tx, rs) {
+         console.log('Record count (expected to be 2): ' + rs.rows.item(0).mycount);
+       }, function(tx, error) {
+         console.log('SELECT error: ' + error.message);
+       });
+    });
   }
 
-  $scope.get = function(page, link) {
-    return [{page: page, link: link}];
+  $scope.get = function() {
+    var redes = [];
+    db.transaction(function(tx) {
+       tx.executeSql('CREATE TABLE IF NOT EXISTS redes (page, link)');
+       tx.executeSql('SELECT page, link FROM redes', [], function(tx, rs) {
+          for (i = 0; i < rs.rows.length; i++) {
+            console.log(rs.rows.item(i));
+            redes.push(rs.rows.item(i));
+          }
+       }, function(tx, error) {
+         console.log('SELECT error: ' + error.message);
+       });
+    });
+    return redes;
   }
 
-   // var db = window.openDatabase('db2.db', 1.0, 'db', 2*1024*1024);
-   // console.log(db);
+  $scope.clear = function() {
+    db.transaction(function(tx) {
+       tx.executeSql('CREATE TABLE IF NOT EXISTS redes (page, link)');
+       tx.executeSql('DELETE FROM redes', [], function(tx, rs) {
+          console.log("all clear");
+       }, function(tx, error) {
+         console.log('SELECT error: ' + error.message);
+       });
+    });   
+  }
+
    // console.log("Prefs");
    // $ionicPlatform.ready(function() {
    //   $cordovaPreferences.store('key', 'myvalue');
