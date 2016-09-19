@@ -1,0 +1,15 @@
+<ion-view view-title="Dashboard">
+  <ion-content class="padding">
+    <h1>Facebook</h1>
+    <p>Tipo de red social</p>
+    <label class="item item-input">
+      <span class="input-label">Pagina</span>
+      <input type="text" ng-model="page">
+    </label>
+    <label class="item item-input">
+      <span class="input-label">Link</span>
+      <input type="text" ng-model="link">
+    </label>
+    <button ng-click="save(page, link)">Guardar</button>
+  </ion-content>
+</ion-view>
